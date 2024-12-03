@@ -1,8 +1,9 @@
 import cookieParser from "cookie-parser";
 import express from "express";
 import cors from "cors";
-import { routes } from "./routes";
+import { routes } from "../src/routes";
 import multer from "multer";
+import serverless from "serverless-http";
 
 const app = express();
 const storage = multer.memoryStorage();
@@ -27,6 +28,11 @@ app.use(upload.single("archivo"));
 
 routes(app);
 
+// local
 app.listen(8001, () => {
   console.log("Listening to port 8001");
 });
+
+//production
+app.use("/.netlify/functions/index", routes);
+export const handler = serverless(app);
