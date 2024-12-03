@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import { routes } from "../src/routes";
 import multer from "multer";
-import serverlessHttp from "serverless-http";
+import ServerlessHttp from "serverless-http";
 
 const app = express();
 const storage = multer.memoryStorage();
@@ -34,8 +34,13 @@ app.listen(8001, () => {
 });
 
 //production
-app.use("/.netlify/functions/index", routes);
-const handler = serverlessHttp(app);
+/* app.use("/.netlify/functions/index", routes); */
+app.get("/.netlify/functions/index", (req,res)=>{
+  return res.json({
+    message: "hellow World"
+  })
+});
+const handler = ServerlessHttp(app);
 
 module.exports.handler = async(event:any, context:any)=>{
   const result = await handler(event,context);
