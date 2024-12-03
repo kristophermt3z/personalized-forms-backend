@@ -34,5 +34,11 @@ app.listen(8001, () => {
 });
 
 //production
-app.use("/.netlify/functions/index", routes);
+app.use("/.netlify/functions/index", (req:any, res:any, next:any) => {
+  if (req.originalUrl.startsWith("/.netlify/functions/index")) {
+    req.url = req.originalUrl.replace("/.netlify/functions/index", "");
+  }
+  next();
+}, routes);
+
 export const handler = serverless(app);
