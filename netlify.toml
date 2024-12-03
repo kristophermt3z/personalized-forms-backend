@@ -1,5 +1,6 @@
 [build]
   functions = "functions"
+  node_bundler = "esbuild"
 
 [functions]
   external_node_modules = ["ts-node", "typescript", "reflect-metadata", "typeorm"]

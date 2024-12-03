@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import { routes } from "../src/routes";
 import multer from "multer";
-import serverless from "serverless-http";
+import serverlessHttp from "serverless-http";
 
 const app = express();
 const storage = multer.memoryStorage();
@@ -35,4 +35,6 @@ app.listen(8001, () => {
 
 //production
 app.use("/.netlify/functions/index", routes);
-export const handler = serverless(app);
+export const handler = serverlessHttp(app);
+
+/* module.exports.handler = async() */
