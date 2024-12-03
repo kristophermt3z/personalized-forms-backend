@@ -11,7 +11,7 @@ const upload = multer({ storage: storage });
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(
+/* app.use(
   cors({
     origin: [
       "http://localhost:3000",
@@ -21,13 +21,13 @@ app.use(
     credentials: true,
     optionsSuccessStatus: 200,
   })
-);
-//app.use(cors());
+); */
+app.use(cors());
 
 app.use(upload.single("archivo"));
 
-routes(app);
-
+/* routes(app);
+ */
 // local
 app.listen(8001, () => {
   console.log("Listening to port 8001");
@@ -35,6 +35,9 @@ app.listen(8001, () => {
 
 //production
 app.use("/.netlify/functions/index", routes);
-export const handler = serverlessHttp(app);
+const handler = serverlessHttp(app);
 
-/* module.exports.handler = async() */
+module.exports.handler = async(event:any, context:any)=>{
+  const result = await handler(event,context);
+  return result;
+}
