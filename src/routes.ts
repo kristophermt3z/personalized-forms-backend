@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { helloWorld } from "./controller/hwlloWorld.controller";
 
-export const routes = (router: Router) => {
-  /* Exortos */
+const router = Router();
+
+export const routes = () => {
   router.get("/helloWorld", helloWorld);
 };
+export default router;
