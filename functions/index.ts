@@ -34,12 +34,12 @@ app.listen(8001, () => {
 });
 
 //production
-/* app.use("/.netlify/functions/index", routes); */
-app.get("/.netlify/functions/index", (req,res)=>{
+app.use("/.netlify/functions/index", routes);
+/* app.get("/.netlify/functions/index", (req,res)=>{
   return res.json({
     message: "hellow World"
   })
-});
+}); */
 const handler = ServerlessHttp(app);
 
 module.exports.handler = async(event:any, context:any)=>{
