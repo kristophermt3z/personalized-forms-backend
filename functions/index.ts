@@ -1,7 +1,7 @@
 import cookieParser from "cookie-parser";
 import express from "express";
 import cors from "cors";
-import { routes } from "../src/routes";
+import routes from "../src/routes";
 import multer from "multer";
 import ServerlessHttp from "serverless-http";
 
@@ -42,7 +42,7 @@ app.use("/.netlify/functions/index", routes);
 }); */
 const handler = ServerlessHttp(app);
 
-module.exports.handler = async(event:any, context:any)=>{
-  const result = await handler(event,context);
+module.exports.handler = async (event: any, context: any) => {
+  const result = await handler(event, context);
   return result;
-}
+};
