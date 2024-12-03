@@ -9,6 +9,9 @@ const app = express();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+const isProduction = process.env.NODE_ENV === "production";
+const basePath = isProduction ? "/.netlify/functions/index" : "";
+
 app.use(express.json());
 app.use(cookieParser());
 /* app.use(
@@ -26,20 +29,24 @@ app.use(cors());
 
 app.use(upload.single("archivo"));
 
+
+app.use(basePath, routes);
+
+if (!isProduction) {
+  app.listen(8001, () => {
+    console.log(`Listening on http://localhost:8001${basePath}`);
+  });
+}
+
 /* routes(app);
  */
 // local
-app.listen(8001, () => {
+/* app.listen(8001, () => {
   console.log("Listening to port 8001");
-});
+}); */
 
 //production
-app.use("/.netlify/functions/index", routes);
-/* app.get("/.netlify/functions/index", (req,res)=>{
-  return res.json({
-    message: "hellow World"
-  })
-}); */
+/* app.use("/.netlify/functions/index", routes); */
 const handler = ServerlessHttp(app);
 
 module.exports.handler = async (event: any, context: any) => {
