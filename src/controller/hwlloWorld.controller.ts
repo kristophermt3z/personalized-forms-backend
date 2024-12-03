@@ -7,7 +7,7 @@ export const helloWorld = async (
   try {
     return res.json({
       success: true,
-      message: "Hello World",
+      message: "Hello final",
     });
   } catch (error) {
     console.log(error);

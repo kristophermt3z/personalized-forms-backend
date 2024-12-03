@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index",
+    "dev": "nodemon --watch 'src/**/*' --exec ts-node --files --transpile-only functions/index.ts",
     "build": "netlify deploy --prod",
-    "start": "ts-node functions/index.ts",
+    "start": "nodemon ts-node functions/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --ext .ts",
     "typeorm": "typeorm-ts-node-commonjs -d ./src/data-source.ts"

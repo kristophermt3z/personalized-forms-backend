@@ -38,15 +38,6 @@ if (!isProduction) {
   });
 }
 
-/* routes(app);
- */
-// local
-/* app.listen(8001, () => {
-  console.log("Listening to port 8001");
-}); */
-
-//production
-/* app.use("/.netlify/functions/index", routes); */
 const handler = ServerlessHttp(app);
 
 module.exports.handler = async (event: any, context: any) => {
