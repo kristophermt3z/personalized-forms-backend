@@ -7,38 +7,44 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const login = async (req: Request, res: Response) => {
-    const { email, password } = req.body;
-  
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required." });
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ message: "Email and password are required." });
+  }
+
+  try {
+    const userRepository = AppDataSource.getRepository(User);
+
+    // Verificar si el usuario existe
+    const user = await userRepository.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
     }
-  
-    try {
-      const userRepository = AppDataSource.getRepository(User);
-  
-      // Verificar si el usuario existe
-      const user = await userRepository.findOne({ where: { email } });
-      if (!user) {
-        return res.status(404).json({ message: "User not found." });
-      }
-  
-      // Validar contraseña
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        return res.status(401).json({ message: "Invalid credentials." });
-      }
-  
-      // Generar token
-      const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET!, {
-        expiresIn: "1h",
-      });
-  
-      res.status(200).json({ message: "Login successful.", token });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Error logging in." });
+
+    // Validar contraseña
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Invalid credentials." });
     }
-  };
+
+    // Generar token
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw new Error("JWT_SECRET is not defined in environment variables.");
+    }
+    const token = jwt.sign({ id: user.id, email: user.email }, jwtSecret, {
+      expiresIn: "1h",
+    });
+
+    res.status(200).json({ message: "Login successful.", token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error logging in." });
+  }
+};
 
 export const register = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
