@@ -17,7 +17,7 @@ const basePath = isProduction ? "/.netlify/functions/index" : "";
 
 app.use(express.json());
 app.use(cookieParser());
-/* app.use(
+app.use(
   cors({
     origin: [
       "http://localhost:3000",
@@ -27,8 +27,8 @@ app.use(cookieParser());
     credentials: true,
     optionsSuccessStatus: 200,
   })
-); */
-app.use(cors());
+);
+/* app.use(cors()); */
 
 app.use(upload.single("archivo"));
 
