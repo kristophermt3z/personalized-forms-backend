@@ -1,7 +1,7 @@
 import cookieParser from "cookie-parser";
 import express from "express";
 import cors from "cors";
-import routes from "../src/routes";
+import routes from "../src/routes/routes";
 import multer from "multer";
 import ServerlessHttp from "serverless-http";
 
