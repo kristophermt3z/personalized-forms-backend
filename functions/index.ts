@@ -4,6 +4,9 @@ import cors from "cors";
 import routes from "../src/routes/routes";
 import multer from "multer";
 import ServerlessHttp from "serverless-http";
+import { AppDataSource } from "../src/config/database";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 const storage = multer.memoryStorage();
@@ -29,7 +32,6 @@ app.use(cors());
 
 app.use(upload.single("archivo"));
 
-
 app.use(basePath, routes);
 
 if (!isProduction) {
@@ -37,6 +39,14 @@ if (!isProduction) {
     console.log(`Listening on http://localhost:8001${basePath}`);
   });
 }
+
+AppDataSource.initialize()
+  .then(() => {
+    console.log("Database connected.");
+  })
+  .catch((err) => {
+    console.error("Error initializing database:", err);
+  });
 
 const handler = ServerlessHttp(app);
 
