@@ -20,6 +20,7 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: [
+      "https://personalized-forms-kristopher.netlify.app",
       "http://localhost:3000",
       "http://localhost:8080",
       "http://localhost:4200",
