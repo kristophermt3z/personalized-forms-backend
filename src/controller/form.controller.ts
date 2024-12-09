@@ -26,3 +26,23 @@ export const getForms = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error fetching forms.", error });
   }
 };
+
+export const searchForms = async (req: Request, res: Response) => {
+  const { query } = req.query;
+
+  if (!query) {
+    return res.status(400).json({ message: "Search query is required" });
+  }
+
+  try {
+    const forms = await Form.find({
+      $or: [
+        { title: { $regex: query, $options: "i" } },
+        { description: { $regex: query, $options: "i" } },
+      ],
+    });
+    res.status(200).json(forms);
+  } catch (err) {
+    res.status(500).json({ message: "Error searching forms" });
+  }
+};
