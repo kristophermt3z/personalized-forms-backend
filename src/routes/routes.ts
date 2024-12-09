@@ -8,7 +8,7 @@ const router = Router();
 router.get("/helloWorld", helloWorld);
 router.post("/auth/register", register);
 router.post("/auth/login", login);
-router.post("/create-form", createForm);
-router.get("/get-forms", getForms);
+router.post("/forms/create-form", createForm);
+router.get("/forms/get-forms", getForms);
 
 export default router;

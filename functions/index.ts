@@ -4,7 +4,7 @@ import cors from "cors";
 import routes from "../src/routes/routes";
 import multer from "multer";
 import ServerlessHttp from "serverless-http";
-import connectDB, { AppDataSource } from "../src/config/database";
+import connectDB from "../src/config/database";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -41,14 +41,6 @@ if (!isProduction) {
 }
 
 connectDB();
-
-AppDataSource.initialize()
-  .then(() => {
-    console.log("Database connected.");
-  })
-  .catch((err) => {
-    console.error("Error initializing database:", err);
-  });
 
 const handler = ServerlessHttp(app);
 
