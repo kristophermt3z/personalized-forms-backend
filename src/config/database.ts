@@ -1,7 +1,10 @@
 import { DataSource } from "typeorm";
 import { Template } from "../entities/Template.entity";
 import { User } from "../entities/user.entity";
+
+import mongoose from "mongoose";
 import dotenv from "dotenv";
+import { MongoClient, ServerApiVersion } from 'mongodb' ;
 dotenv.config();
 
 export const AppDataSource = new DataSource({
@@ -14,3 +17,23 @@ export const AppDataSource = new DataSource({
   synchronize: true,
   entities: [User, Template],
 });
+
+
+const connectDB = async () => {
+  try {
+    const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/myapp";
+    await mongoose.connect(mongoURI, {
+      serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+      }
+    });
+    console.log("MongoDB connected successfully!");
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error);
+    process.exit(1); // Salir si hay un error
+  }
+};
+
+export default connectDB;

@@ -4,7 +4,7 @@ import cors from "cors";
 import routes from "../src/routes/routes";
 import multer from "multer";
 import ServerlessHttp from "serverless-http";
-import { AppDataSource } from "../src/config/database";
+import connectDB, { AppDataSource } from "../src/config/database";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -39,6 +39,8 @@ if (!isProduction) {
     console.log(`Listening on http://localhost:8001${basePath}`);
   });
 }
+
+connectDB();
 
 AppDataSource.initialize()
   .then(() => {
