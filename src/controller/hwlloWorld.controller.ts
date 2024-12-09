@@ -6,9 +6,10 @@ export const helloWorld = async (
 ) => {
   try {
     return res.json({
-      success: true,
-      message: "Hello final",
-    });
+      "success": true,
+      "message": "Hello, lets create forms :)"
+    }
+    );
   } catch (error) {
     console.log(error);
     return res.status(500).json({
