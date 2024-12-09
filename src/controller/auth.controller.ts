@@ -2,8 +2,14 @@ import { Request, Response } from "express";
 import User, { IUser } from "../models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
-const JWT_SECRET = process.env.JWT_SECRET || "defaultsecret";
+dotenv.config();
+
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET is not defined in environment variables.");
+}
 
 // User Register
 export const register = async (req: Request, res: Response) => {
