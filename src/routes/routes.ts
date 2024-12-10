@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { helloWorld } from "../controller/hwlloWorld.controller";
+import { helloWorld } from "../controller/helloWorld.controller";
 import { login, register } from "../controller/auth.controller";
 import { createForm, getForms, searchForms } from "../controller/form.controller";
 import { authenticate } from "../middlewares/auth.middleware";
