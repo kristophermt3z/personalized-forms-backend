@@ -1,15 +1,7 @@
 import { Request, Response } from "express";
-import User, { IUser } from "../models/User";
+import User from "../models/User";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) {
-  throw new Error("JWT_SECRET is not defined in environment variables.");
-}
+import { generateToken } from "../utils/jwt";
 
 // User Register
 export const register = async (req: Request, res: Response) => {
@@ -20,7 +12,7 @@ export const register = async (req: Request, res: Response) => {
   }
 
   try {
-    // Verify if email is already regitred
+    // Verify if email is already registered
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "Email already exists." });
@@ -49,7 +41,7 @@ export const login = async (req: Request, res: Response) => {
   }
 
   try {
-    // Verify i fuser exist
+    // Verify if user exists
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: "User not found." });
@@ -61,10 +53,8 @@ export const login = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Invalid credentials." });
     }
 
-    // Generate token
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    // Generate token using utils/jwt.ts
+    const token = generateToken({ id: user.id, email: user.email });
 
     res.status(200).json({ message: "Login successful.", token });
   } catch (error) {

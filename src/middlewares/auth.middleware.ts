@@ -1,13 +1,5 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-const jwtSecret = process.env.JWT_SECRET;
-if (!jwtSecret) {
-  throw new Error("JWT_SECRET is not defined in environment variables.");
-}
+import { verifyToken } from "../utils/jwt";
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -17,13 +9,13 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
   }
 
   try {
-    const user = jwt.verify(token, jwtSecret);
-    console.log("Authenticated user:", user); // Depuración
-    req.user = user;
+    // Verify token using utils/jwt.ts
+    const user = verifyToken(token);
+    console.log("Authenticated user:", user); // Debugging
+    req.user = user; // Attach decoded user to request
     next();
   } catch (err) {
     console.error("Invalid token:", err);
     res.status(400).json({ message: "Invalid token." });
   }
 };
-
