@@ -3,17 +3,21 @@ import Form from "../models/Forms";
 
 export const createForm = async (req: Request, res: Response) => {
   try {
-    const { title, description, fields, authorId } = req.body;
+    const { title, description, fields } = req.body;
+    const user = req.user; // Extracted from middleware (token)
 
-    if (!title || !description || !fields || !authorId) {
+    if (!title || !description || !fields || !user) {
       return res.status(400).json({ message: "All fields are required." });
     }
 
-    const newForm = new Form({ title, description, fields, authorId });
+    const newForm = new Form({ title, description, fields, authorId: user.id });
     await newForm.save();
 
-    res.status(201).json({ message: "Form created successfully.", form: newForm });
+    res
+      .status(201)
+      .json({ message: "Form created successfully.", form: newForm });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Error creating form.", error });
   }
 };

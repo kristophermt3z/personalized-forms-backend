@@ -8,6 +8,11 @@ if (!JWT_SECRET) {
   throw new Error("JWT_SECRET is not defined in environment variables.");
 }
 
+interface DecodedUser {
+  id: string;
+  email: string;
+}
+
 /**
  * Generate a JSON Web Token
  * @param payload - Data to encode in the token
