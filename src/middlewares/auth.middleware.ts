@@ -14,8 +14,13 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
     console.log("Authenticated user:", user); // Debugging
     req.user = user; // Attach decoded user to request
     next();
-  } catch (err) {
-    console.error("Invalid token:", err);
-    res.status(400).json({ message: "Invalid token." });
+  } catch (err: any) {
+    console.error("Invalid token");
+
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token expired.", tokenExpired: true });
+    }
+
+    res.status(401).json({ message: "Invalid token.", tokenExpired: true });
   }
 };
