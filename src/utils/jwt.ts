@@ -19,7 +19,7 @@ interface DecodedUser {
  * @param expiresIn - Expiration time (default: 1h)
  * @returns Signed JWT token
  */
-export const generateToken = (payload: object, expiresIn = "1h"): string => {
+export const generateToken = (payload: object, expiresIn = "6h"): string => {
   return jwt.sign(payload, JWT_SECRET, { expiresIn });
 };
 
