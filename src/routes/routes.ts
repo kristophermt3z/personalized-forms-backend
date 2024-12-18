@@ -12,7 +12,7 @@ router.post("/auth/register", register);
 router.post("/auth/login", login);
 
 router.post("/forms/create-form", authenticate, createForm);
-router.get("/forms/get-forms", authenticate, getForms);
+router.get("/forms/get-forms", getForms);
 router.get("/forms/:id", authenticate, getFormById);
 router.put("/forms/:id", authenticate, updateForm);
 router.delete("/forms/:id", deleteForm);
