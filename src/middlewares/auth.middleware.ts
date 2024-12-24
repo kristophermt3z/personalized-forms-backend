@@ -11,7 +11,6 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
   try {
     // Verify token using utils/jwt.ts
     const user = verifyToken(token);
-    console.log("Authenticated user:", user); // Debugging
     req.user = user; // Attach decoded user to request
     next();
   } catch (err: any) {
