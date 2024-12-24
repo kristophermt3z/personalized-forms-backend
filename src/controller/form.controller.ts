@@ -31,6 +31,16 @@ export const getForms = async (req: Request, res: Response) => {
   }
 };
 
+export const fetchProfileForms = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    const forms = await Form.find({ authorId: user.id }).sort({ createdAt: -1 });
+    res.status(200).json(forms);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching forms.", error });
+  }
+};
+
 export const getFormById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
