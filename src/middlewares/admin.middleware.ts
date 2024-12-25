@@ -11,7 +11,7 @@ export const isAdmin = async (
   try {
     const user = await User.findById(userId);
     if (!user || !user.admin) {
-      return res.status(403).json({ message: "Access denied. Admins only." });
+      return res.status(401).json({ message: "Access denied. Admins only." , isNotAdmin: true});
     }
     next();
   } catch (error) {
