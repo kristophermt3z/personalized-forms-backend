@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { login, register } from "../controller/auth.controller";
+import { getCurrentUser, login, register } from "../controller/auth.controller";
 import {
   createForm,
   deleteForm,
@@ -15,6 +15,7 @@ import { isAdmin } from "../middlewares/admin.middleware";
 const router = Router();
 router.post("/auth/register", register);
 router.post("/auth/login", login);
+router.get("/auth/me", authenticate, getCurrentUser);
 
 router.post("/forms/create-form", authenticate, createForm);
 router.get("/forms/get-forms", getForms);
