@@ -22,7 +22,13 @@ export const register = async (req: Request, res: Response) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
-    const newUser = new User({ name, email, password: hashedPassword });
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+      admin: true,
+      active: true,
+    });
     await newUser.save();
 
     res.status(201).json({ message: "User registered successfully." });
@@ -37,7 +43,9 @@ export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ message: "Email and password are required." });
+    return res
+      .status(400)
+      .json({ message: "Email and password are required." });
   }
 
   try {
@@ -54,7 +62,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     // Generate token using utils/jwt.ts
-    const token = generateToken({ id: user.id, email: user.email });
+    const token = generateToken({ id: user.id, email: user.email, admin : user.admin, active : user.active });
 
     res.status(200).json({ message: "Login successful.", token });
   } catch (error) {
