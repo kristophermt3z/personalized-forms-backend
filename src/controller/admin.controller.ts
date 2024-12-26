@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import User from "../models/User";
+import Form from "../models/Forms";
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -35,7 +36,15 @@ export const deleteUser = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
-    res.status(200).json({ message: "User deleted successfully." });
+
+    // Delete all forms created by the user
+    await Form.deleteMany({ authorId: id });
+
+    res
+      .status(200)
+      .json({ message: "User and associated forms deleted successfully." });
+
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error deleting user." });
