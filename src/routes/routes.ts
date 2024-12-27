@@ -9,19 +9,29 @@ import {
   updateForm,
 } from "../controller/form.controller";
 import { authenticate } from "../middlewares/auth.middleware";
-import { deleteUser, getAllUsers, updateUser } from "../controller/admin.controller";
+import {
+  deleteUser,
+  getAllUsers,
+  updateUser,
+} from "../controller/admin.controller";
 import { isAdmin } from "../middlewares/admin.middleware";
+import { upload } from "../middlewares/imageUpload";
 
 const router = Router();
 router.post("/auth/register", register);
 router.post("/auth/login", login);
 router.get("/auth/me", authenticate, getCurrentUser);
 
-router.post("/forms/create-form", authenticate, createForm);
+router.post(
+  "/forms/create-form",
+  authenticate,
+  upload.single("image"),
+  createForm
+);
 router.get("/forms/get-forms", getForms);
 router.get("/forms/get-profile-forms", authenticate, fetchProfileForms);
 router.get("/forms/:id", authenticate, getFormById);
-router.put("/forms/:id", authenticate, updateForm);
+router.put("/forms/:id", authenticate, upload.single("image"), updateForm);
 router.delete("/forms/:id", deleteForm);
 
 router.get("/admin/users", authenticate, isAdmin, getAllUsers);

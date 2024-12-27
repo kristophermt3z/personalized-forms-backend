@@ -10,6 +10,7 @@ interface IForm extends Document {
     required: boolean;
   }[];
   authorId: string;
+  image: string;
   createdAt: Date;
 }
 
@@ -25,6 +26,7 @@ const FormSchema: Schema = new Schema({
     },
   ],
   authorId: { type: String, required: true },
+  image: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
 });
 

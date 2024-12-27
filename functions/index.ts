@@ -2,16 +2,16 @@ import cookieParser from "cookie-parser";
 import express from "express";
 import cors from "cors";
 import routes from "../src/routes/routes";
-import multer from "multer";
-import ServerlessHttp from "serverless-http";
+/* import multer from "multer";
+ */import ServerlessHttp from "serverless-http";
 import connectDB from "../src/config/database";
 import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
+/* const storage = multer.memoryStorage(); */
+/* const upload = multer({ storage: storage });
+ */
 const isProduction = process.env.NODE_ENV === "production";
 const basePath = isProduction ? "/.netlify/functions/index" : "";
 
@@ -31,7 +31,7 @@ app.use(
 );
 /* app.use(cors()); */
 
-app.use(upload.single("archivo"));
+/* app.use(upload.single("image")); */
 
 app.use(basePath, routes);
 

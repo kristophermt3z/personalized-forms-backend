@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Form from "../models/Forms";
+import cloudinary from "../config/cloudinary";
 
 export const createForm = async (req: Request, res: Response) => {
   try {
@@ -10,7 +11,25 @@ export const createForm = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "All fields are required." });
     }
 
-    const newForm = new Form({ title, description, fields, authorId: user.id });
+    if (!req.file) {
+      return res.status(400).json({ message: "Image is required." });
+    }
+
+    const pathImage = req.file.path;
+    let parsedFields;
+    try {
+      parsedFields = JSON.parse(fields);
+    } catch (error) {
+      return res.status(400).json({ message: "Invalid fields format." });
+    }
+
+    const newForm = new Form({
+      title,
+      description,
+      fields: parsedFields,
+      authorId: user.id,
+      image: pathImage,
+    });
     await newForm.save();
 
     res
@@ -34,7 +53,9 @@ export const getForms = async (req: Request, res: Response) => {
 export const fetchProfileForms = async (req: Request, res: Response) => {
   try {
     const user = req.user;
-    const forms = await Form.find({ authorId: user.id }).sort({ createdAt: -1 });
+    const forms = await Form.find({ authorId: user.id }).sort({
+      createdAt: -1,
+    });
     res.status(200).json(forms);
   } catch (error) {
     res.status(500).json({ message: "Error fetching forms.", error });
@@ -49,7 +70,7 @@ export const getFormById = async (req: Request, res: Response) => {
     if (!form) {
       return res.status(404).json({ message: "Form not found" });
     }
-    
+
     res.status(200).json(form);
   } catch (error) {
     console.error("Error fetching form:", error);
@@ -66,17 +87,47 @@ export const updateForm = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "All fields are required." });
     }
 
-    const updatedForm = await Form.findByIdAndUpdate(
-      id,
-      { title, description, fields },
-      { new: true }
-    );
+    const form = await Form.findById(id);
+
+    if (!form) {
+      return res.status(404).json({ message: "Form not found." });
+    }
+
+    let parsedFields;
+    try {
+      parsedFields = JSON.parse(fields);
+    } catch (error) {
+      return res.status(400).json({ message: "Invalid fields format." });
+    }
+
+    const updateData: any = {
+      title,
+      description,
+      fields: parsedFields,
+    };
+
+    if (req.file && form.image) {
+      const publicId = form.image.split("/").pop()?.split(".")[0];
+      if (publicId) {
+        await cloudinary.uploader.destroy(`forms/${publicId}`);
+      }
+    }
+
+    if (req.file) {
+      updateData.image = req.file.path;
+    }
+
+    const updatedForm = await Form.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
 
     if (!updatedForm) {
       return res.status(404).json({ message: "Form not found" });
     }
 
-    res.status(200).json({ message: "Form updated successfully.", form: updatedForm });
+    res
+      .status(200)
+      .json({ message: "Form updated successfully.", form: updatedForm });
   } catch (error) {
     console.error("Error updating form:", error);
     res.status(500).json({ message: "Error updating form.", error });
