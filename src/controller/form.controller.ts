@@ -139,6 +139,13 @@ export const deleteForm = async (req: Request, res: Response) => {
     const { id } = req.params;
     const deletedForm = await Form.findByIdAndDelete(id);
 
+    if (deletedForm) {
+      const publicId = deletedForm.image.split("/").pop()?.split(".")[0];
+      if (publicId) {
+        await cloudinary.uploader.destroy(`forms/${publicId}`);
+      }
+    }
+
     if (!deletedForm) {
       return res.status(404).json({ message: "Form not found." });
     }

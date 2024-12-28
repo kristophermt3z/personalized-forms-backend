@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import User from "../models/User";
 import Form from "../models/Forms";
+import cloudinary from "../config/cloudinary";
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -35,6 +36,19 @@ export const deleteUser = async (req: Request, res: Response) => {
     const user = await User.findByIdAndDelete(id);
     if (!user) {
       return res.status(404).json({ message: "User not found." });
+    }
+
+    // Find all forms created by the user
+    const forms = await Form.find({ authorId: id });
+
+    // Delete each form's image from Cloudinary
+    for (const form of forms) {
+      if (form.image) {
+        const publicId = form.image.split("/").pop()?.split(".")[0];
+        if (publicId) {
+          await cloudinary.uploader.destroy(`forms/${publicId}`);
+        }
+      }
     }
 
     // Delete all forms created by the user
