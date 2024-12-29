@@ -30,7 +30,7 @@ router.post(
 );
 router.get("/forms/get-forms", getForms);
 router.get("/forms/get-profile-forms", authenticate, fetchProfileForms);
-router.get("/forms/:id", authenticate, getFormById);
+router.get("/forms/:id", getFormById);
 router.put("/forms/:id", authenticate, upload.single("image"), updateForm);
 router.delete("/forms/:id", deleteForm);
 
