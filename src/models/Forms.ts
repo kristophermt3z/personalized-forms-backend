@@ -1,4 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
+import Reply from "./Reply";
+import cloudinary from "../config/cloudinary";
 
 interface IForm extends Document {
   title: string;
@@ -25,9 +27,39 @@ const FormSchema: Schema = new Schema({
       required: { type: Boolean, default: false },
     },
   ],
-  authorId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  authorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   image: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
 });
+
+FormSchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function (next) {
+    const formId = this._id;
+
+    try {
+      // Delete all replies related to this form
+      await Reply.deleteMany({ formId });
+
+      // Remove the associated image from Cloudinary if it exists
+      const form = await mongoose.model<IForm>("Form").findById(formId);
+      if (form && form.image) {
+        const publicId = form.image.split("/").pop()?.split(".")[0];
+        if (publicId) {
+          await cloudinary.uploader.destroy(`forms/${publicId}`);
+        }
+      }
+
+      next();
+    } catch (error: any) {
+      next(error);
+    }
+  }
+);
 
 export default mongoose.model<IForm>("Form", FormSchema);

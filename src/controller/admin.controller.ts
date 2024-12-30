@@ -34,35 +34,17 @@ export const deleteUser = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const user = await User.findByIdAndDelete(id);
+    const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
 
-    // Find all forms created by the user
-    const userId = new mongoose.Types.ObjectId(id);
-    const forms = await Form.find({ authorId: userId });
-
-    // Delete each form's image from Cloudinary
-    for (const form of forms) {
-      if (form.image) {
-        const publicId = form.image.split("/").pop()?.split(".")[0];
-        if (publicId) {
-          await cloudinary.uploader.destroy(`forms/${publicId}`);
-        }
-      }
-    }
-
-    // Delete all forms created by the user
-    await Form.deleteMany({ authorId: userId });
-
-    res
-      .status(200)
-      .json({ message: "User and associated forms deleted successfully." });
-
-
+    // Triggers the `pre` hook in the User model to handle deletion of related data
+    await user.deleteOne(); 
+    res.status(200).json({ message: "User and related data deleted successfully." });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error deleting user." });
   }
 };
+

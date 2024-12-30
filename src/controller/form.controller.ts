@@ -136,24 +136,20 @@ export const updateForm = async (req: Request, res: Response) => {
 };
 
 export const deleteForm = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
   try {
-    const { id } = req.params;
-    const deletedForm = await Form.findByIdAndDelete(id);
-
-    if (deletedForm) {
-      const publicId = deletedForm.image.split("/").pop()?.split(".")[0];
-      if (publicId) {
-        await cloudinary.uploader.destroy(`forms/${publicId}`);
-      }
-    }
-
-    if (!deletedForm) {
+    const form = await Form.findById(id);
+    if (!form) {
       return res.status(404).json({ message: "Form not found." });
     }
 
-    res.status(200).json({ message: "Form deleted successfully." });
+    // Triggers the `pre` hook in the Form model to handle deletion of replies and images
+    await form.deleteOne();
+    res.status(200).json({ message: "Form and related replies deleted successfully." });
   } catch (error) {
     console.error("Error deleting form:", error);
-    res.status(500).json({ message: "Error deleting form.", error });
+    res.status(500).json({ message: "Error deleting form." });
   }
 };
+
