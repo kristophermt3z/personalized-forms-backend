@@ -16,6 +16,7 @@ import {
 } from "../controller/admin.controller";
 import { isAdmin } from "../middlewares/admin.middleware";
 import { upload } from "../middlewares/imageUpload";
+import { getRepliesByForm, submitReply } from "../controller/reply.controller";
 
 const router = Router();
 router.post("/auth/register", register);
@@ -33,6 +34,9 @@ router.get("/forms/get-profile-forms", authenticate, fetchProfileForms);
 router.get("/forms/:id", getFormById);
 router.put("/forms/:id", authenticate, upload.single("image"), updateForm);
 router.delete("/forms/:id", deleteForm);
+
+router.post("/reply", authenticate, submitReply);
+router.get("/reply/:formId", authenticate, getRepliesByForm);
 
 router.get("/admin/users", authenticate, isAdmin, getAllUsers);
 router.put("/admin/users/:id", authenticate, isAdmin, updateUser);
