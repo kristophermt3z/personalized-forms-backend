@@ -28,7 +28,7 @@ export const submitReply = async (req: Request, res: Response) => {
 export const getRepliesByForm = async (req: Request, res: Response) => {
   try {
     const { formId } = req.params;
-    const replies = await Reply.find({ formId }).sort({ createdAt: -1 });
+    const replies = await Reply.find({ formId }).populate("userId", "name email").sort({ createdAt: -1 });
 
     res.status(200).json(replies);
   } catch (error) {
