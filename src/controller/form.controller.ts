@@ -66,7 +66,7 @@ export const fetchProfileForms = async (req: Request, res: Response) => {
 export const getFormById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const form = await Form.findById(id);
+    const form = await Form.findById(id).populate("authorId", "_id");
 
     if (!form) {
       return res.status(404).json({ message: "Form not found" });
