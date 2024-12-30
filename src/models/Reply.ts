@@ -1,14 +1,14 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IReply extends Document {
-  formId: string;
+  formId: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
   responses: { fieldId: string; answer: string }[];
   createdAt: Date;
 }
 
 const ReplySchema: Schema = new Schema({
-  formId: { type: String, required: true },
+  formId: { type: mongoose.Schema.Types.ObjectId, ref: "Forms", required: true },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   responses: [
     {

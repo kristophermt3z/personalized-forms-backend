@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from "../models/User";
 import Form from "../models/Forms";
 import cloudinary from "../config/cloudinary";
+import mongoose from "mongoose";
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -39,7 +40,8 @@ export const deleteUser = async (req: Request, res: Response) => {
     }
 
     // Find all forms created by the user
-    const forms = await Form.find({ authorId: id });
+    const userId = new mongoose.Types.ObjectId(id);
+    const forms = await Form.find({ authorId: userId });
 
     // Delete each form's image from Cloudinary
     for (const form of forms) {
@@ -52,7 +54,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     }
 
     // Delete all forms created by the user
-    await Form.deleteMany({ authorId: id });
+    await Form.deleteMany({ authorId: userId });
 
     res
       .status(200)

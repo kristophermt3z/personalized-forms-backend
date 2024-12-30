@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Form from "../models/Forms";
 import cloudinary from "../config/cloudinary";
+import mongoose from "mongoose";
 
 export const createForm = async (req: Request, res: Response) => {
   try {
@@ -27,7 +28,7 @@ export const createForm = async (req: Request, res: Response) => {
       title,
       description,
       fields: parsedFields,
-      authorId: user.id,
+      authorId: new mongoose.Types.ObjectId(user.id),
       image: pathImage,
     });
     await newForm.save();
@@ -43,7 +44,7 @@ export const createForm = async (req: Request, res: Response) => {
 
 export const getForms = async (req: Request, res: Response) => {
   try {
-    const forms = await Form.find().sort({ createdAt: -1 });
+    const forms = await Form.find().populate("authorId", "name").sort({ createdAt: -1 });
     res.status(200).json(forms);
   } catch (error) {
     res.status(500).json({ message: "Error fetching forms.", error });
@@ -52,8 +53,8 @@ export const getForms = async (req: Request, res: Response) => {
 
 export const fetchProfileForms = async (req: Request, res: Response) => {
   try {
-    const user = req.user;
-    const forms = await Form.find({ authorId: user.id }).sort({
+    const userId = new mongoose.Types.ObjectId(req.user.id);
+    const forms = await Form.find({ authorId: userId }).populate("authorId", "name").sort({
       createdAt: -1,
     });
     res.status(200).json(forms);

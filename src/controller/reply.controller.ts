@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Reply from "../models/Reply";
+import mongoose from "mongoose";
 
 export const submitReply = async (req: Request, res: Response) => {
   try {
@@ -11,8 +12,8 @@ export const submitReply = async (req: Request, res: Response) => {
     }
 
     const newReply = new Reply({
-      formId,
-      userId: user.id,
+      formId: new mongoose.Types.ObjectId(formId),
+      userId: new mongoose.Types.ObjectId(user.id),
       responses,
     });
 
@@ -28,7 +29,7 @@ export const submitReply = async (req: Request, res: Response) => {
 export const getRepliesByForm = async (req: Request, res: Response) => {
   try {
     const { formId } = req.params;
-    const replies = await Reply.find({ formId }).populate("userId", "name email").sort({ createdAt: -1 });
+    const replies = await Reply.find({ formId: new mongoose.Types.ObjectId(formId) }).populate("userId", "name email").sort({ createdAt: -1 });
 
     res.status(200).json(replies);
   } catch (error) {

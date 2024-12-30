@@ -9,7 +9,7 @@ interface IForm extends Document {
     label: string;
     required: boolean;
   }[];
-  authorId: string;
+  authorId: mongoose.Types.ObjectId;
   image: string;
   createdAt: Date;
 }
@@ -25,7 +25,7 @@ const FormSchema: Schema = new Schema({
       required: { type: Boolean, default: false },
     },
   ],
-  authorId: { type: String, required: true },
+  authorId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   image: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
 });
