@@ -44,7 +44,7 @@ export const createForm = async (req: Request, res: Response) => {
 
 export const getForms = async (req: Request, res: Response) => {
   try {
-    const forms = await Form.find().populate("authorId", "name").sort({ createdAt: -1 });
+    const forms = await Form.find().populate("authorId", "_id name").sort({ createdAt: -1 });
     res.status(200).json(forms);
   } catch (error) {
     res.status(500).json({ message: "Error fetching forms.", error });
